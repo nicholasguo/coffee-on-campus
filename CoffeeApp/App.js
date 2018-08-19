@@ -1,63 +1,3 @@
-// import React from 'react';
-// import { Button, View, Text } from 'react-native';
-// import { createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
-
-// class HomeScreen extends React.Component {
-//   render() {
-//     return (
-//       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//         <Text>Home Screen</Text>
-//         <Button
-//           title="Go to Details"
-//           onPress={() => this.props.navigation.navigate('Details')}
-//         />
-//       </View>
-//     );
-//   }
-// }
-
-// class DetailsScreen extends React.Component {
-//   render() {
-//     return (
-//       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//         <Text>Details Screen</Text>
-//         <Button
-//           title="Go to Details... again"
-//           onPress={() => this.props.navigation.push('Details')}
-//         />
-//         <Button
-//           title="Go to Home"
-//           onPress={() => this.props.navigation.navigate('Home')}
-//         />
-//         <Button
-//           title="Go back"
-//           onPress={() => this.props.navigation.goBack()}
-//         />
-//       </View>
-//     );
-//   }
-// }
-
-// const RootStack = createStackNavigator(
-//   {
-//     Home: {
-//       screen: HomeScreen,
-//     },
-//     Details: {
-//       screen: DetailsScreen,
-//     },
-//   },
-//   {
-//     initialRouteName: 'Home',
-//   }
-// );
-
-// export default class App extends React.Component {
-//   render() {
-//     return <RootStack />;
-//   }
-// }
-
 import React from 'react';
 import {
   ActivityIndicator,
@@ -66,10 +6,19 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  TextInput,
+  PixelRatio
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-class SignInScreen extends React.Component {
+import cssVar from './Lib/cssVar';
+
+class LoggedOutScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {username: '', password: ''};
+  }
+
   static navigationOptions = {
     title: 'Please sign in',
   };
@@ -77,6 +26,23 @@ class SignInScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            textContentType={'username'}
+            style={styles.input}
+            placeholder="Username"
+            onChangeText={(username) => this.setState({username})}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            textContentType={'password'}
+            secureTextEntry = {true}
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={(password) => this.setState({password})}
+          />
+          </View>
         <Button title="Sign in!" onPress={this._signInAsync} />
       </View>
     );
@@ -164,10 +130,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  input: {
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 18,
+    //padding: 10,
+    marginHorizontal: 10
+  },
+  inputContainer: {
+    borderWidth: 1 / PixelRatio.get(),
+    borderColor: 'red',
+    borderRadius: 6,
+    height: 45,
+    width: 250,
+    margin: 2
+  }
 });
 
 const AppStack = createStackNavigator({ Home: HomeScreen, Other: OtherScreen });
-const AuthStack = createStackNavigator({ SignIn: SignInScreen });
+const AuthStack = createStackNavigator({ LoggedOut: LoggedOutScreen });
 
 export default createSwitchNavigator(
   {
