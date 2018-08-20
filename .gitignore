@@ -1,2 +1,5 @@
-flask/data.db
+*.db
+.DS_Store
+**/__pycache__/
+**/.idea
 
