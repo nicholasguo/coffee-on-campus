@@ -1,8 +1,23 @@
 from flask import *
 import sqlite3
-import datetime
+import auth
 
 db = 'data.db'
+
+
+def initialize_db():
+    with sqlite3.connect(db) as conn: # connect to that database (will create if it doesn't already exist)
+        c = conn.cursor()  # make cursor into database (allows us to execute commands)
+        try:
+            c.execute(
+                '''CREATE TABLE users (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
+        except:
+            pass
+        try:
+            c.execute(
+                '''CREATE TABLE profiles (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
+        except:
+            pass
 
 app = Flask(__name__)
 
@@ -16,38 +31,28 @@ def sign_up():
         username = request.json['user']
         password = request.json['pass']
         email = request.json['email']
-        conn = sqlite3.connect(db)  # connect to that database (will create if it doesn't already exist)
-        c = conn.cursor()  # make cursor into database (allows us to execute commands)
-        try:
-            c.execute('''CREATE TABLE users (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
-        except:
-            pass
-        c.execute('''INSERT into users VALUES (?,?,?,?);''', (username, email, password, datetime.datetime.now()))
-        conn.commit()
-        conn.close()
-        return jsonify(success=True, username=username, email=email)
+        return auth.add_user(username, password, email)
     except:
-        return jsonify(success=False)
+        return jsonify(success=False, reason='Server Error')
 
 @app.route('/signin', methods=['GET'])
 def sign_in():
     try:
         username = request.args.get('user')
         password = request.args.get('pass')
-        conn = sqlite3.connect(db)  # connect to that database (will create if it doesn't already exist)
-        c = conn.cursor()  # make cursor into database (allows us to execute commands)
-        try:
-            c.execute('''CREATE TABLE users (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
-        except:
-            pass
-        rows = c.execute(
-            '''SELECT * FROM users WHERE user = ? AND pass = ? LIMIT 1;''',
-            (username, password)).fetchall()
-        conn.commit()
-        conn.close()
-        return jsonify(success=True) if len(rows) > 0 else jsonify(success=False)
+        return auth.log_in(username, password)
     except:
-        return jsonify(success=False)
+        return jsonify(success=False, reason='Server Error')
+
+
+@app.route('/signin', methods=['GET'])
+def get_profile():
+    try:
+        username = request.args.get('user')
+        return auth.log_in(username)
+    except:
+        return jsonify(success=False, reason='Server Error')
 
 if __name__ == '__main__':
+    initialize_db()
     app.run(debug=True, host='0.0.0.0', port = 5555)
