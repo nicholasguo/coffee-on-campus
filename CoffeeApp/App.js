@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Alert,
   AsyncStorage,
   Button,
   StatusBar,
@@ -20,6 +21,102 @@ class LoggedOutScreen extends React.Component {
   }
 
   static navigationOptions = {
+    title: 'Please sign in or create an account',
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Button title="Sign in!" onPress={this._goToSignIn} />
+        <Button title="Create Account" onPress={this._goToSignUp} />
+      </View>
+    );
+  }
+
+  _goToSignIn = () => {
+    this.props.navigation.navigate('SignIn');
+  };
+
+  _goToSignUp = () => {
+    this.props.navigation.navigate('SignUp');
+  };
+}
+
+class SignUpScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {username: '', password: ''};
+  }
+
+  static navigationOptions = {
+    title: 'Create an Account',
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            textContentType='username'
+            autoCapitalize = 'none'
+            style={styles.input}
+            placeholder="Username"
+            onChangeText={(username) => this.setState({username})}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            textContentType='email'
+            keyboardType='email-address'
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={(email) => this.setState({email})}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            textContentType='password'
+            secureTextEntry = {true}
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={(password) => this.setState({password})}
+          />
+        </View>
+        <Button title="Sign up!" onPress={this._signUpAsync} />
+      </View>
+    );
+  }
+
+  _signUpAsync = async () => {
+    let response = await fetch('http://127.0.0.1:5555/signup', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: this.state.username,
+        pass: this.state.password,
+        email: this.state.email,
+      }),
+    });
+    let responseJson = await response.json();
+    if (responseJson.success == true) {
+      await AsyncStorage.setItem('userToken', 'abc');
+      this.props.navigation.navigate('App');
+    } else {
+      Alert.alert('SignUp Failed!');
+    }
+  };
+}
+
+class SignInScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {username: '', password: ''};
+  }
+
+  static navigationOptions = {
     title: 'Please sign in',
   };
 
@@ -29,6 +126,7 @@ class LoggedOutScreen extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput
             textContentType={'username'}
+            autoCapitalize = 'none'
             style={styles.input}
             placeholder="Username"
             onChangeText={(username) => this.setState({username})}
@@ -42,15 +140,25 @@ class LoggedOutScreen extends React.Component {
             placeholder="Password"
             onChangeText={(password) => this.setState({password})}
           />
-          </View>
+        </View>
         <Button title="Sign in!" onPress={this._signInAsync} />
       </View>
     );
   }
 
   _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
+    let response = await fetch('http://127.0.0.1:5555/signin?' 
+      + 'user=' + this.state.username
+      + '&pass=' + this.state.password
+    )
+    let responseJson = await response.json();
+    console.log(responseJson.success)
+    if (responseJson.success == true) {
+      await AsyncStorage.setItem('userToken', 'abc');
+      this.props.navigation.navigate('App');
+    } else {
+      Alert.alert('SignIn Failed!');
+    }
   };
 }
 
@@ -148,7 +256,7 @@ const styles = StyleSheet.create({
 });
 
 const AppStack = createStackNavigator({ Home: HomeScreen, Other: OtherScreen });
-const AuthStack = createStackNavigator({ LoggedOut: LoggedOutScreen });
+const AuthStack = createStackNavigator({ LoggedOut: LoggedOutScreen, SignIn: SignInScreen, SignUp: SignUpScreen });
 
 export default createSwitchNavigator(
   {
