@@ -81,8 +81,25 @@ class ProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         const { navigation } = this.props;
-        this.state = {username: navigation.getParam('user', 'None')};
-        console.log(ProfileScreen.navigationOptions)
+        this.state = {username: navigation.getParam('user', 'None'), isLoading: true};
+    }
+
+    componentDidMount(){
+        return fetch('https://facebook.github.io/react-native/movies.json')
+            .then((response) => response.json())
+            .then((responseJson) => {
+
+                this.setState({
+                    isLoading: false,
+                    dataSource: responseJson.movies,
+                }, function(){
+
+                });
+
+            })
+            .catch((error) =>{
+                console.error(error);
+            });
     }
 
     render() {
