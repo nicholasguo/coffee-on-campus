@@ -1,6 +1,7 @@
 from flask import *
 import sqlite3
 import auth
+import profile
 
 db = 'data.db'
 
@@ -10,7 +11,7 @@ def initialize_db():
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
         try:
             c.execute(
-                '''CREATE TABLE users (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
+                '''CREATE TABLE users (user text, name text, college text, class text);''')  # run a CREATE TABLE command
         except:
             pass
         try:
@@ -49,7 +50,7 @@ def sign_in():
 def get_profile():
     try:
         username = request.args.get('user')
-        return auth.log_in(username)
+        return profile.get_profile(username)
     except:
         return jsonify(success=False, reason='Server Error')
 

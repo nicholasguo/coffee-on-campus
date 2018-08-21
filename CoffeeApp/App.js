@@ -37,14 +37,25 @@ class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         const { navigation } = this.props;
-        this.state = {username: navigation.getParam('user', 'None')};
-        console.log(navigation)
+        this.state = {user: '', isLoading: true};
+    }
+
+    async componentWillMount(){
+        let user = await AsyncStorage.getItem('userToken');
+        this.setState({user: user, isLoading: false});
     }
 
     render() {
+        if(this.state.isLoading){
+            return(
+                <View style={{flex: 1, padding: 20}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.username}!</Text>
+                <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.user}!</Text>
                 <Button title="Show me more of the app" onPress={this._showMoreApp} />
                 <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
             </View>
@@ -52,7 +63,7 @@ class HomeScreen extends React.Component {
     }
 
     _showMoreApp = () => {
-        this.props.navigation.navigate('Profile', {user: this.state.username});
+        this.props.navigation.navigate('Profile', {user: this.state.user});
     };
 
     _signOutAsync = async () => {
@@ -81,7 +92,7 @@ class ProfileScreen extends React.Component {
     constructor(props) {
         super(props);
         const { navigation } = this.props;
-        this.state = {username: navigation.getParam('user', 'None'), isLoading: true};
+        this.state = {user: navigation.getParam('user', 'None'), isLoading: true};
     }
 
     componentDidMount(){

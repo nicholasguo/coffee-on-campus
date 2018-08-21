@@ -17,7 +17,7 @@ import cssVar from './Lib/cssVar';
 export class LoggedOutScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {username: '', password: ''};
+        this.state = {user: '', password: ''};
     }
 
     static navigationOptions = {
@@ -45,7 +45,7 @@ export class LoggedOutScreen extends React.Component {
 export class SignUpScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {username: '', password: '', email: ''};
+        this.state = {user: '', password: '', email: ''};
     }
 
     static navigationOptions = {
@@ -57,11 +57,11 @@ export class SignUpScreen extends React.Component {
             <View style={styles.container}>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        textContentType='username'
+                        textContentType='user'
                         autoCapitalize = 'none'
                         style={styles.input}
-                        placeholder="Username"
-                        onChangeText={(username) => this.setState({username})}
+                        placeholder="user"
+                        onChangeText={(user) => this.setState({user})}
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -96,15 +96,15 @@ export class SignUpScreen extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                user: this.state.username,
+                user: this.state.user,
                 pass: this.state.password,
                 email: this.state.email,
             }),
         });
         let responseJson = await response.json();
         if (responseJson.success == true) {
-            await AsyncStorage.setItem('userToken', 'abc');
-            this.props.navigation.navigate('App', {user: this.state.username});
+            await AsyncStorage.setItem('userToken', this.state.user);
+            this.props.navigation.navigate('Home');
         } else {
             Alert.alert(responseJson.reason);
         }
@@ -114,7 +114,7 @@ export class SignUpScreen extends React.Component {
 export class SignInScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {username: '', password: ''};
+        this.state = {user: '', password: ''};
     }
 
     static navigationOptions = {
@@ -126,11 +126,11 @@ export class SignInScreen extends React.Component {
             <View style={styles.container}>
                 <View style={styles.inputContainer}>
                     <TextInput
-                        textContentType={'username'}
+                        textContentType={'user'}
                         autoCapitalize = 'none'
                         style={styles.input}
-                        placeholder="Username"
-                        onChangeText={(username) => this.setState({username})}
+                        placeholder="user"
+                        onChangeText={(user) => this.setState({user})}
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -149,13 +149,13 @@ export class SignInScreen extends React.Component {
 
     _signInAsync = async () => {
         let response = await fetch('http://127.0.0.1:5555/signin?' 
-            + 'user=' + this.state.username
+            + 'user=' + this.state.user
             + '&pass=' + this.state.password
         );
         let responseJson = await response.json();
         if (responseJson.success === true) {
-            await AsyncStorage.setItem('userToken', 'abc');
-            this.props.navigation.navigate('Home', {user: this.state.username});
+            await AsyncStorage.setItem('userToken', this.state.user);
+            this.props.navigation.navigate('Home');
         } else {
             Alert.alert(responseJson.reason);
         }
