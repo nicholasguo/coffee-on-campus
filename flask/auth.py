@@ -2,7 +2,16 @@ import sqlite3
 import datetime
 from flask import *
 
-db = 'data.db'
+db = 'users.db'
+
+def initialize_db():
+    with sqlite3.connect(db) as conn: # connect to that database (will create if it doesn't already exist)
+        c = conn.cursor()  # make cursor into database (allows us to execute commands)
+        try:
+            c.execute(
+                '''CREATE TABLE users (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
+        except:
+            pass
 
 def add_user(username, password, email):
     if username_exists(username):

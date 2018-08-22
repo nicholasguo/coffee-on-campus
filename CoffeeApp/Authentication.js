@@ -60,7 +60,7 @@ export class SignUpScreen extends React.Component {
                         textContentType='user'
                         autoCapitalize = 'none'
                         style={styles.input}
-                        placeholder="user"
+                        placeholder="Username"
                         onChangeText={(user) => this.setState({user})}
                     />
                 </View>
@@ -129,7 +129,7 @@ export class SignInScreen extends React.Component {
                         textContentType={'user'}
                         autoCapitalize = 'none'
                         style={styles.input}
-                        placeholder="user"
+                        placeholder="Username"
                         onChangeText={(user) => this.setState({user})}
                     />
                 </View>

@@ -3,22 +3,9 @@ import sqlite3
 import auth
 import profile
 
-db = 'data.db'
-
-
-def initialize_db():
-    with sqlite3.connect(db) as conn: # connect to that database (will create if it doesn't already exist)
-        c = conn.cursor()  # make cursor into database (allows us to execute commands)
-        try:
-            c.execute(
-                '''CREATE TABLE users (user text, name text, college text, class text);''')  # run a CREATE TABLE command
-        except:
-            pass
-        try:
-            c.execute(
-                '''CREATE TABLE profiles (user text, email text, pass text, timing timestamp);''')  # run a CREATE TABLE command
-        except:
-            pass
+def initialize_dbs():
+    auth.initialize_db()
+    profile.initialize_db()
 
 app = Flask(__name__)
 
@@ -34,7 +21,7 @@ def sign_up():
         email = request.json['email']
         return auth.add_user(username, password, email)
     except:
-        return jsonify(success=False, reason='Server Error')
+        return jsonify(success=False, reason='Could not sign up due to a Server Error')
 
 @app.route('/signin', methods=['GET'])
 def sign_in():
@@ -43,17 +30,23 @@ def sign_in():
         password = request.args.get('pass')
         return auth.log_in(username, password)
     except:
-        return jsonify(success=False, reason='Server Error')
+        return jsonify(success=False, reason='Could not sign in due to a Server Error')
 
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    try:
+        return profile.update_profile(**request.json)
+    except:
+        return jsonify(success=False, reason='Could not update profile due to a Server Error')
 
-@app.route('/signin', methods=['GET'])
+@app.route('/get_profile', methods=['GET'])
 def get_profile():
     try:
         username = request.args.get('user')
         return profile.get_profile(username)
     except:
-        return jsonify(success=False, reason='Server Error')
+        return jsonify(success=False, reason='Could not get profile due to a Server Error')
 
 if __name__ == '__main__':
-    initialize_db()
+    initialize_dbs()
     app.run(debug=True, host='0.0.0.0', port = 5555)

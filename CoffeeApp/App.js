@@ -16,6 +16,7 @@ import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import cssVar from './Lib/cssVar';
 
 import { LoggedOutScreen, SignUpScreen, SignInScreen, AuthLoadingScreen } from './Authentication'
+import { ProfileScreen, EditProfileScreen } from "./Profile";
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -27,8 +28,7 @@ class HomeScreen extends React.Component {
                         await AsyncStorage.clear();
                         navigation.navigate('Auth');
                     }}
-                    title="Log Out"
-                    color="#000"
+                    title="Sign Out"
                 />
             ),
         };
@@ -37,12 +37,12 @@ class HomeScreen extends React.Component {
     constructor(props) {
         super(props);
         const { navigation } = this.props;
-        this.state = {user: '', isLoading: true};
+        this.state = {userToken: '', isLoading: true};
     }
 
     async componentWillMount(){
-        let user = await AsyncStorage.getItem('userToken');
-        this.setState({user: user, isLoading: false});
+        let userToken = await AsyncStorage.getItem('userToken');
+        this.setState({userToken: userToken, isLoading: false});
     }
 
     render() {
@@ -55,7 +55,7 @@ class HomeScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.user}!</Text>
+                <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.userToken}!</Text>
                 <Button title="Show me more of the app" onPress={this._showMoreApp} />
                 <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
             </View>
@@ -63,7 +63,7 @@ class HomeScreen extends React.Component {
     }
 
     _showMoreApp = () => {
-        this.props.navigation.navigate('Profile', {user: this.state.user});
+        this.props.navigation.navigate('Profile', {user: this.state.userToken, userToken: this.state.userToken, isLoading: true});
     };
 
     _signOutAsync = async () => {
@@ -72,61 +72,7 @@ class HomeScreen extends React.Component {
     };
 }
 
-class ProfileScreen extends React.Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            headerTitle: navigation.getParam('user', 'None') + '\'s profile',
-            headerRight: (
-                <Button
-                    onPress={async () => {
-                        await AsyncStorage.clear();
-                        navigation.navigate('Auth');
-                    }}
-                    title="Log Out"
-                    color="#000"
-                />
-            ),
-        };
-    };
 
-    constructor(props) {
-        super(props);
-        const { navigation } = this.props;
-        this.state = {user: navigation.getParam('user', 'None'), isLoading: true};
-    }
-
-    componentDidMount(){
-        return fetch('https://facebook.github.io/react-native/movies.json')
-            .then((response) => response.json())
-            .then((responseJson) => {
-
-                this.setState({
-                    isLoading: false,
-                    dataSource: responseJson.movies,
-                }, function(){
-
-                });
-
-            })
-            .catch((error) =>{
-                console.error(error);
-            });
-    }
-
-    render() {
-        return (
-            <View style={styles.container}>
-                <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
-                <StatusBar barStyle="default" />
-            </View>
-        );
-    }
-
-    _signOutAsync = async () => {
-        await AsyncStorage.clear();
-        this.props.navigation.navigate('Auth');
-    };
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -169,7 +115,7 @@ const styles = StyleSheet.create({
  * }
  */
 
-const AppStack = createStackNavigator({ Home: HomeScreen, Profile: ProfileScreen });
+const AppStack = createStackNavigator({ Home: HomeScreen, Profile: ProfileScreen, EditProfile: EditProfileScreen });
 const AuthStack = createStackNavigator({ LoggedOut: LoggedOutScreen, SignIn: SignInScreen, SignUp: SignUpScreen });
 
 export default createSwitchNavigator(
