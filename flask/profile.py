@@ -17,7 +17,7 @@ def create_profile(user):
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
         rows = c.execute('''SELECT * FROM profiles WHERE user = ?;''',(user,)).fetchone()
         if rows is None:
-            c.execute('''INSERT into profiles VALUES (?,'','','','','');''', (user))
+            c.execute('''INSERT into profiles VALUES (?,'','','','','');''', (user,))
 
 
 def update_profile(user, name=None, college=None, year=None, major=None, description=None):

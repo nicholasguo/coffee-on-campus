@@ -17,6 +17,7 @@ import cssVar from './Lib/cssVar';
 
 import { LoggedOutScreen, SignUpScreen, SignInScreen, AuthLoadingScreen } from './Authentication'
 import { ProfileScreen, EditProfileScreen } from "./Profile";
+import { MatchesScreen } from "./Matches";
 
 class HomeScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -56,14 +57,18 @@ class HomeScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.userToken}!</Text>
-                <Button title="Show me more of the app" onPress={this._showMoreApp} />
-                <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
+                <Button title="View your profile" onPress={this._showProfile} />
+                <Button title="See my matches" onPress={this._showMatches} />
             </View>
         );
     }
 
-    _showMoreApp = () => {
+    _showProfile = () => {
         this.props.navigation.navigate('Profile', {user: this.state.userToken, userToken: this.state.userToken, isLoading: true});
+    };
+
+    _showMatches = () => {
+        this.props.navigation.navigate('Matches', {userToken: this.state.userToken, isLoading: true});
     };
 
     _signOutAsync = async () => {
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
  * }
  */
 
-const AppStack = createStackNavigator({ Home: HomeScreen, Profile: ProfileScreen, EditProfile: EditProfileScreen });
+const AppStack = createStackNavigator({ Home: HomeScreen, Profile: ProfileScreen, EditProfile: EditProfileScreen, Matches: MatchesScreen });
 const AuthStack = createStackNavigator({ LoggedOut: LoggedOutScreen, SignIn: SignInScreen, SignUp: SignUpScreen });
 
 export default createSwitchNavigator(

@@ -2,10 +2,12 @@ from flask import *
 import sqlite3
 import auth
 import profile
+import matches
 
 def initialize_dbs():
     auth.initialize_db()
     profile.initialize_db()
+    matches.initialize_db()
 
 app = Flask(__name__)
 
@@ -46,6 +48,37 @@ def get_profile():
         return profile.get_profile(username)
     except:
         return jsonify(success=False, reason='Could not get profile due to a Server Error')
+
+@app.route('/get_matches', methods=['GET'])
+def get_matches():
+    try:
+        username = request.args.get('user')
+        return jsonify(success=True, matches=matches.get_matches(username))
+    except:
+        return jsonify(success=False, reason='Could not get matches due to a Server Error')
+
+@app.route('/request_match', methods=['POST'])
+def request_match():
+    try:
+        username = request.json['user']
+        matches.add_request(username)
+        return matches.make_request(username)
+    except:
+        return jsonify(success=False, reason='Could not request match due to a Server Error')
+
+@app.route('/waiting_for_match', methods=['GET'])
+def waiting_for_match():
+    try:
+        username = request.args.get('user')
+        matches.add_request(username)
+        if matches.request_exists(username):
+            return jsonify(success=True, waiting=True, reason='Waiting for a new match')
+        if matches.request_too_recent(username):
+            return jsonify(success=True, waiting=True, reason='Wait before requesting a match')
+
+        return jsonify(success=True, waiting=False)
+    except:
+        return jsonify(success=False, reason='Could not check matching status due to a Server Error')
 
 if __name__ == '__main__':
     initialize_dbs()

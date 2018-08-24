@@ -66,33 +66,37 @@ export class ProfileScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1, justifyContent: 'center'}}>
                     <Text style={{fontSize: 30}}>{this.state.name}</Text>
                 </View>
                 <View style={{flex: 3, justifyContent: 'center', backgroundColor: 'powderblue'}}>
-                    <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
+                    <Button title="Picture goes here" onPress={this._signOutAsync} />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex:0.2}}/>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>College:</Text>
-                        <Text>{this.state.college}</Text>
+                        <Text style={{fontSize: 18}}>School:</Text>
+                        <Text style={{fontSize: 18}}>{this.state.college}</Text>
                     </View>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Class:</Text>
-                        <Text>{this.state.class}</Text>
+                        <Text style={{fontSize: 18}}>Class:</Text>
+                        <Text style={{fontSize: 18}}>{this.state.year}</Text>
                     </View>
+                    <View style={{flex:0.2}}/>
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'powderblue'}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex:0.2}}/>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Major:</Text>
-                        <Text>{this.state.major}</Text>
+                        <Text style={{fontSize: 18}}>Major:</Text>
+                        <Text style={{fontSize: 18}}>{this.state.major}</Text>
                     </View>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Fun Fact:</Text>
-                        <Text>{this.state.class}</Text>
+                        <Text style={{fontSize: 18}}>Fun Fact:</Text>
+                        <Text style={{fontSize: 18}}>{this.state.description}</Text>
                     </View>
+                    <View style={{flex:0.2}}/>
                 </View>
-                <View style={{flex: 1.5, justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1.5, justifyContent: 'center'}}>
                     <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
                 </View>
                 <StatusBar barStyle="default" />
@@ -130,7 +134,11 @@ export class EditProfileScreen extends React.Component {
                         });
                         let responseJson = await response.json();
                         if (responseJson.success == true) {
-                            navigation.navigate('Profile', {isLoading: 'true'});
+                            if (navigation.getParam('newUser', false)) {
+                                navigation.navigate('Home');
+                            } else {
+                                navigation.navigate('Profile', {isLoading: 'true'});
+                            }
                         } else {
                             Alert.alert(responseJson.reason);
                         }
@@ -157,7 +165,7 @@ export class EditProfileScreen extends React.Component {
     }
 
     render() {
-        if(this.state.isLoading){
+        if (this.state.isLoading){
             return(
                 <View style={{flex: 1, padding: 20}}>
                     <ActivityIndicator/>
@@ -166,43 +174,51 @@ export class EditProfileScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <View style={{flex: 1, justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1, justifyContent: 'center'}}>
                     <TextInput style={{fontSize: 30}} defaultValue={this.state.name}
                                placeholder="Enter your name"
                                onChangeText={(name) => {this.setState({name}); this.props.navigation.setParams({name});}}/>
                 </View>
-                <View style={{flex: 3, justifyContent: 'center', backgroundColor: 'powderblue'}}>
-                    <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
+                <View style={{flex: 3, justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                    <Button title="Picture goes here" onPress={this._signOutAsync} />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex:0.2}}/>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>School:</Text>
-                        <TextInput defaultValue={this.state.college}
+                        <Text style={{fontSize: 18}}>School:</Text>
+                        <TextInput style={{fontSize: 18}}
+                                   defaultValue={this.state.college}
                                    placeholder="Enter the school you attend"
                                    onChangeText={(college) => {this.setState({college}); this.props.navigation.setParams({college});}}/>
                     </View>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Class:</Text>
-                        <TextInput defaultValue={this.state.year}
+                        <Text style={{fontSize: 18}}>Class:</Text>
+                        <TextInput style={{fontSize: 18}}
+                                   defaultValue={this.state.year}
                                    placeholder="Enter your graduation year"
                                    onChangeText={(year) => {this.setState({year}); this.props.navigation.setParams({year});}}/>
                     </View>
+                    <View style={{flex:0.2}}/>
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', backgroundColor: 'powderblue'}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex:0.2}}/>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Major:</Text>
-                        <TextInput defaultValue={this.state.major}
+                        <Text style={{fontSize: 18}}>Major:</Text>
+                        <TextInput style={{fontSize: 18}}
+                                   defaultValue={this.state.major}
                                    placeholder="What's your major"
                                    onChangeText={(major) => {this.setState({major}); this.props.navigation.setParams({major});}}/>
                     </View>
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <Text>Fun Fact:</Text>
-                        <TextInput defaultValue={this.state.description}
+                        <Text style={{fontSize: 18}}>Fun Fact:</Text>
+                        <TextInput style={{fontSize: 18}}
+                                   defaultValue={this.state.description}
                                    placeholder="Tell us a fun fact about yourself"
                                    onChangeText={(description) => {this.setState({description}); this.props.navigation.setParams({description});}}/>
                     </View>
+                    <View style={{flex:0.2}}/>
                 </View>
-                <View style={{flex: 1.5, justifyContent: 'center', backgroundColor: 'lightblue'}}>
+                <View style={{flex: 1.5, justifyContent: 'center'}}>
                     <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
                 </View>
                 <StatusBar barStyle="default" />

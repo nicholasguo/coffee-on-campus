@@ -104,7 +104,7 @@ export class SignUpScreen extends React.Component {
         let responseJson = await response.json();
         if (responseJson.success == true) {
             await AsyncStorage.setItem('userToken', this.state.user);
-            this.props.navigation.navigate('Home');
+            this.props.navigation.navigate('EditProfile', {userToken: this.state.user, user: this.state.user, newUser: true});
         } else {
             Alert.alert(responseJson.reason);
         }
