@@ -4,6 +4,7 @@ import {
     Alert,
     AsyncStorage,
     Button,
+    Image,
     StatusBar,
     StyleSheet,
     View,
@@ -16,7 +17,7 @@ export class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         if (navigation.getParam('userToken', 'None') == navigation.getParam('user', 'None'))
             return {
-                title: navigation.getParam('user', 'None') + '\'s profile',
+                title: 'Profile',
                 headerRight: (
                     <Button
                         onPress={async () => {
@@ -38,7 +39,7 @@ export class ProfileScreen extends React.Component {
     }
 
     async getProfile() {
-        let response = await fetch('http://127.0.0.1:5555/get_profile?'
+        let response = await fetch('http://54.190.221.240:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -48,6 +49,7 @@ export class ProfileScreen extends React.Component {
 
     async componentDidMount(){
         await this.getProfile();
+        console.log(this.state.image)
     }
 
     async componentDidUpdate(){
@@ -69,35 +71,35 @@ export class ProfileScreen extends React.Component {
                 <View style={{flex: 1, justifyContent: 'center'}}>
                     <Text style={{fontSize: 30}}>{this.state.name}</Text>
                 </View>
-                <View style={{flex: 3, justifyContent: 'center', backgroundColor: 'powderblue'}}>
-                    <Button title="Picture goes here" onPress={this._signOutAsync} />
+                <View style={{flex: 3, justifyContent: 'center'}}>
+                    <Image
+                        style={{width: 200, height: 200}}
+                        source={{uri: this.state.image}}
+                    />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex:0.2}}/>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
+                    
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>School:</Text>
                         <Text style={{fontSize: 18}}>{this.state.college}</Text>
                     </View>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Class:</Text>
                         <Text style={{fontSize: 18}}>{this.state.year}</Text>
                     </View>
-                    <View style={{flex:0.2}}/>
+                    
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex:0.2}}/>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
+                    
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Major:</Text>
                         <Text style={{fontSize: 18}}>{this.state.major}</Text>
                     </View>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Fun Fact:</Text>
                         <Text style={{fontSize: 18}}>{this.state.description}</Text>
                     </View>
-                    <View style={{flex:0.2}}/>
-                </View>
-                <View style={{flex: 1.5, justifyContent: 'center'}}>
-                    <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
+                    
                 </View>
                 <StatusBar barStyle="default" />
             </View>
@@ -113,11 +115,11 @@ export class ProfileScreen extends React.Component {
 export class EditProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
-            headerTitle: navigation.getParam('user', 'None') + '\'s profile',
+            headerTitle: navigation.getParam('newUser', false) ? 'Create your profile' : 'Edit your profile',
             headerRight: (
                 <Button
                     onPress={async () => {
-                        let response = await fetch('http://127.0.0.1:5555/update_profile', {
+                        let response = await fetch('http://54.190.221.240:5555/update_profile', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -156,7 +158,7 @@ export class EditProfileScreen extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await fetch('http://127.0.0.1:5555/get_profile?'
+        let response = await fetch('http://54.190.221.240:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -179,47 +181,49 @@ export class EditProfileScreen extends React.Component {
                                placeholder="Enter your name"
                                onChangeText={(name) => {this.setState({name}); this.props.navigation.setParams({name});}}/>
                 </View>
-                <View style={{flex: 3, justifyContent: 'center', backgroundColor: 'lightblue'}}>
-                    <Button title="Picture goes here" onPress={this._signOutAsync} />
+                <View style={{flex: 3, justifyContent: 'center'}}>
+                    <Image
+                        style={{width: 200, height: 200}}
+                        source={{uri: this.state.image}}
+                    />
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex:0.2}}/>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
+                    
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>School:</Text>
-                        <TextInput style={{fontSize: 18}}
+                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                                   multiline={true}
                                    defaultValue={this.state.college}
                                    placeholder="Enter the school you attend"
                                    onChangeText={(college) => {this.setState({college}); this.props.navigation.setParams({college});}}/>
                     </View>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Class:</Text>
-                        <TextInput style={{fontSize: 18}}
+                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                                   multiline={true}
                                    defaultValue={this.state.year}
                                    placeholder="Enter your graduation year"
                                    onChangeText={(year) => {this.setState({year}); this.props.navigation.setParams({year});}}/>
                     </View>
-                    <View style={{flex:0.2}}/>
+                    
                 </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex:0.2}}/>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Major:</Text>
-                        <TextInput style={{fontSize: 18}}
+                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                                   multiline={true}
                                    defaultValue={this.state.major}
                                    placeholder="What's your major"
                                    onChangeText={(major) => {this.setState({major}); this.props.navigation.setParams({major});}}/>
                     </View>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Fun Fact:</Text>
-                        <TextInput style={{fontSize: 18}}
+                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                                   multiline={true}
                                    defaultValue={this.state.description}
                                    placeholder="Tell us a fun fact about yourself"
                                    onChangeText={(description) => {this.setState({description}); this.props.navigation.setParams({description});}}/>
                     </View>
-                    <View style={{flex:0.2}}/>
-                </View>
-                <View style={{flex: 1.5, justifyContent: 'center'}}>
-                    <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
                 </View>
                 <StatusBar barStyle="default" />
             </View>

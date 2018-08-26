@@ -20,7 +20,7 @@ def initialize_db():
             pass
 
 def request_too_recent(user):
-    two_minutes_ago = datetime.datetime.now() - datetime.timedelta(seconds=5)
+    two_minutes_ago = datetime.datetime.now() - datetime.timedelta(seconds=20)
     with sqlite3.connect(db) as conn:  # connect to that database (will create if it doesn't already exist)
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
         rows = c.execute('''SELECT * FROM requests WHERE user = ? AND time > ?;''',
@@ -38,7 +38,7 @@ def add_request(user):
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
         rows = c.execute('''SELECT * FROM requests WHERE user = (?);''', (user, )).fetchone()
         if rows is None:
-            c.execute('''INSERT into requests VALUES (?,?,?);''', (user, True, datetime.datetime.now()))
+            c.execute('''INSERT into requests VALUES (?,?,?);''', (user, True, datetime.datetime.now() - datetime.timedelta(days=1)))
 
 def make_request(user):
     if request_exists(user):
@@ -74,7 +74,7 @@ def already_matched(user, other_user):
         return rows is not None
 
 def get_matches(user):
-    two_minutes_ago = datetime.datetime.now() - datetime.timedelta(seconds=5)
+    two_minutes_ago = datetime.datetime.now()# - datetime.timedelta(seconds=20)
     with sqlite3.connect(db) as conn: # connect to that database (will create if it doesn't already exist)
         conn.row_factory = sqlite3.Row
         c = conn.cursor()  # make cursor into database (allows us to execute commands)

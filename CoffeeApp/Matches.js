@@ -8,8 +8,9 @@ import {
     StyleSheet,
     View,
     FlatList,
+    RefreshControl,
     TextInput,
-    PixelRatio, Text
+    PixelRatio, Text, Image
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator, withNavigation } from 'react-navigation';
 
@@ -20,7 +21,7 @@ class MatchItem extends React.Component {
     }
 
     async getProfile() {
-        let response = await fetch('http://127.0.0.1:5555/get_profile?'
+        let response = await fetch('http://54.190.221.240:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -35,11 +36,14 @@ class MatchItem extends React.Component {
         return (
             <View style={[{flex: 1, flexDirection: 'row'}, styles.match]}>
                 <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{flex: 1, justifyContent: 'center'}}>
+                    <View style={{flex: 1.5, justifyContent: 'center'}}>
                         <Text style={styles.item}>{this.state.name}</Text>
                     </View>
-                    <View style={{flex: 4, backgroundColor: 'powderblue', width: 160}}>
-                        <Text style={styles.item}>Picture</Text>
+                    <View style={{flex: 4, alignItems: 'center'}}>
+                        <Image
+                            style={{width: 120, height: 120}}
+                            source={{uri: this.state.image}}
+                        />
                     </View>
                 </View>
                 <View style={{flex: 1, justifyContent: 'center'}}>
@@ -53,7 +57,6 @@ class MatchItem extends React.Component {
 
     _showProfile = () => {
         this.props.navigation.navigate('Profile', {user: this.state.user, userToken: this.state.userToken, isLoading: true});
-        console.log(this.state.userToken)
     };
 }
 
@@ -64,7 +67,8 @@ class MatchRequest extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await fetch('http://127.0.0.1:5555/waiting_for_match?'
+        console.log(this.state.userToken);
+        let response = await fetch('http://54.190.221.240:5555/waiting_for_match?'
             + 'user=' + this.state.userToken
         );
         let responseJson = await response.json();
@@ -72,20 +76,23 @@ class MatchRequest extends React.Component {
         this.setState({isLoading: false});
     }
 
-    async componentDidUpdate() {
-        if (this.state.isLoading) {
-            console.log(this.state.waiting)
-            let response = await fetch('http://127.0.0.1:5555/waiting_for_match?'
-                + 'user=' + this.state.userToken
-            );
-            let responseJson = await response.json();
-            this.setState(responseJson);
-            this.setState({isLoading: false});
-        }
+    componentDidUpdate() {
+        return fetch('http://54.190.221.240:5555/waiting_for_match?' + 'user=' + this.state.userToken)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if (this.state.isLoading) {
+                    this.setState(responseJson);
+                    this.setState({isLoading: false});
+                    this.props.callback()
+                }
+            })
+            .catch((error) =>{
+                console.error(error);
+            });
     }
 
     _requestMatch = async () => {
-        let response = await fetch('http://127.0.0.1:5555/request_match', {
+        let response = await fetch('http://54.190.221.240:5555/request_match', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -111,11 +118,15 @@ class MatchRequest extends React.Component {
                 </View>
             )
         }
-        if (this.state.waiting) {
+        if (!this.state.ready) {
             return(
                 <View style={{flex: 1, padding: 20}}>
                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={styles.item}>{this.state.reason}</Text>
+                        <Text style={styles.item}>
+                            <Text numberOfLines={5}>
+                                {this.state.reason}
+                            </Text>
+                        </Text>
                     </View>
                 </View>
             )
@@ -148,7 +159,7 @@ export class MatchesScreen extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await fetch('http://127.0.0.1:5555/get_matches?'
+        let response = await fetch('http://54.190.221.240:5555/get_matches?'
             + 'user=' + this.state.userToken
         );
         let responseJson = await response.json();
@@ -156,6 +167,20 @@ export class MatchesScreen extends React.Component {
         this.setState({isLoading: false});
     }
 
+    async componentDidUpdate() {
+        if (this.state.isLoading) {
+            let response = await fetch('http://54.190.221.240:5555/get_matches?'
+                + 'user=' + this.state.userToken
+            );
+            let responseJson = await response.json();
+            this.setState(responseJson);
+            this.setState({isLoading: false});
+        }
+    }
+
+    dirty = () => {
+        this.setState({isLoading: true})
+    };
 
     render() {
         if (this.state.isLoading){
@@ -168,10 +193,16 @@ export class MatchesScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={{flex: 1}}>
-                    <MatchRequest userToken={this.state.userToken}/>
+                    <MatchRequest userToken={this.state.userToken} callback={this.dirty}/>
                 </View>
-                <View style={{flex: 7}}>
+                <View style={{flex: 5.5}}>
                     <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isLoading}
+                                onRefresh={this.dirty}
+                            />
+                        }
                         data={this.state.matches}
                         renderItem={({item}) => <MatchItem navigation={this.props.navigation} userToken={this.state.userToken} user={item.key}/>}//<Text style={styles.item}>{item.key}</Text>}
                     />
@@ -194,5 +225,6 @@ const styles = StyleSheet.create({
     },
     item: {
         fontSize: 18,
+        textAlign: 'center'
     },
 })

@@ -8,7 +8,7 @@ import {
     StyleSheet,
     View,
     TextInput,
-    PixelRatio
+    PixelRatio, Text
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
@@ -27,6 +27,7 @@ export class LoggedOutScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+                <Text style={{fontSize: 30, textAlign: 'center'}}>{'Coffee on Campus\n'}</Text>
                 <Button title="Sign in!" onPress={this._goToSignIn} />
                 <Button title="Create Account" onPress={this._goToSignUp} />
             </View>
@@ -89,7 +90,7 @@ export class SignUpScreen extends React.Component {
     }
 
     _signUpAsync = async () => {
-        let response = await fetch('http://127.0.0.1:5555/signup', {
+        let response = await fetch('http://54.190.221.240:5555/signup', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -148,7 +149,7 @@ export class SignInScreen extends React.Component {
     }
 
     _signInAsync = async () => {
-        let response = await fetch('http://127.0.0.1:5555/signin?' 
+        let response = await fetch('http://54.190.221.240:5555/signin?'
             + 'user=' + this.state.user
             + '&pass=' + this.state.password
         );

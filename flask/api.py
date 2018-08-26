@@ -71,12 +71,14 @@ def waiting_for_match():
     try:
         username = request.args.get('user')
         matches.add_request(username)
+        if profile.get_name(username) == '':
+            return jsonify(success=True, ready=False, reason='Please add a name to your profile before requesting a match')
         if matches.request_exists(username):
-            return jsonify(success=True, waiting=True, reason='Waiting for a new match')
+            return jsonify(success=True, ready=False, reason='Looking for a match...\nPlease wait while we find you a match')
         if matches.request_too_recent(username):
-            return jsonify(success=True, waiting=True, reason='Wait before requesting a match')
+            return jsonify(success=True, ready=False, reason='You got a match!\nWait before requesting another match')
 
-        return jsonify(success=True, waiting=False)
+        return jsonify(success=True, ready=True)
     except:
         return jsonify(success=False, reason='Could not check matching status due to a Server Error')
 

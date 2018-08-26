@@ -56,7 +56,8 @@ class HomeScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 30}}>Welcome to frinder, {this.state.userToken}!</Text>
+                <Text style={{fontSize: 30, textAlign: 'center'}}>{'Welcome to\nCoffee on Campus!\n'}</Text>
+                <Text style={{fontSize: 18}}>You are logged in as {this.state.userToken}{'\n'}</Text>
                 <Button title="View your profile" onPress={this._showProfile} />
                 <Button title="See my matches" onPress={this._showMatches} />
             </View>
