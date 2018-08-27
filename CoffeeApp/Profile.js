@@ -12,6 +12,7 @@ import {
     PixelRatio, Text
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -78,7 +79,7 @@ export class ProfileScreen extends React.Component {
                     />
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
-                    
+
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>School:</Text>
                         <Text style={{fontSize: 18}}>{this.state.college}</Text>
@@ -87,10 +88,10 @@ export class ProfileScreen extends React.Component {
                         <Text style={{fontSize: 18}}>Class:</Text>
                         <Text style={{fontSize: 18}}>{this.state.year}</Text>
                     </View>
-                    
+
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
-                    
+
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>Major:</Text>
                         <Text style={{fontSize: 18}}>{this.state.major}</Text>
@@ -99,7 +100,7 @@ export class ProfileScreen extends React.Component {
                         <Text style={{fontSize: 18}}>Fun Fact:</Text>
                         <Text style={{fontSize: 18}}>{this.state.description}</Text>
                     </View>
-                    
+
                 </View>
                 <StatusBar barStyle="default" />
             </View>
@@ -175,7 +176,11 @@ export class EditProfileScreen extends React.Component {
             )
         }
         return (
-            <View style={styles.container}>
+            <KeyboardAwareScrollView
+                resetScrollToCoords={{ x: 0, y: 0 }}
+                contentContainerStyle={styles.container}
+                scrollEnabled={false}
+            >
                 <View style={{flex: 1, justifyContent: 'center'}}>
                     <TextInput style={{fontSize: 30}} defaultValue={this.state.name}
                                placeholder="Enter your name"
@@ -188,7 +193,7 @@ export class EditProfileScreen extends React.Component {
                     />
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
-                    
+
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
                         <Text style={{fontSize: 18}}>School:</Text>
                         <TextInput style={{fontSize: 18, textAlign: 'center'}}
@@ -205,7 +210,7 @@ export class EditProfileScreen extends React.Component {
                                    placeholder="Enter your graduation year"
                                    onChangeText={(year) => {this.setState({year}); this.props.navigation.setParams({year});}}/>
                     </View>
-                    
+
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
@@ -226,7 +231,7 @@ export class EditProfileScreen extends React.Component {
                     </View>
                 </View>
                 <StatusBar barStyle="default" />
-            </View>
+            </KeyboardAwareScrollView>
         );
     }
 
