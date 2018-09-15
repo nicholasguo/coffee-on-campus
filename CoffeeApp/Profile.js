@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Font } from 'expo';
 
 export class ProfileScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -40,7 +41,7 @@ export class ProfileScreen extends React.Component {
     }
 
     async getProfile() {
-        let response = await fetch('http://54.190.221.240:5555/get_profile?'
+        let response = await fetch('http://127.0.0.1:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -70,35 +71,35 @@ export class ProfileScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={{flex: 1, justifyContent: 'center'}}>
-                    <Text style={{fontSize: 30}}>{this.state.name}</Text>
+                    <Text style={[styles.input, {fontSize: 30}]}>{this.state.name}</Text>
                 </View>
                 <View style={{flex: 3, justifyContent: 'center'}}>
                     <Image
-                        style={{width: 200, height: 200}}
+                        style={{width: 200, height: 200, borderRadius: 200/2}}
                         source={{uri: this.state.image}}
                     />
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
 
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>School:</Text>
-                        <Text style={{fontSize: 18}}>{this.state.college}</Text>
+                        <Text style={[styles.input]}>School:</Text>
+                        <Text style={[styles.input]}>{this.state.college}</Text>
                     </View>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Class:</Text>
-                        <Text style={{fontSize: 18}}>{this.state.year}</Text>
+                        <Text style={[styles.input]}>Class:</Text>
+                        <Text style={[styles.input]}>{this.state.year}</Text>
                     </View>
 
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
 
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Major:</Text>
-                        <Text style={{fontSize: 18}}>{this.state.major}</Text>
+                        <Text style={[styles.input]}>Major:</Text>
+                        <Text style={[styles.input]}>{this.state.major}</Text>
                     </View>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Fun Fact:</Text>
-                        <Text style={{fontSize: 18}}>{this.state.description}</Text>
+                        <Text style={[styles.input]}>Fun Fact:</Text>
+                        <Text style={[styles.input]}>{this.state.description}</Text>
                     </View>
 
                 </View>
@@ -120,7 +121,7 @@ export class EditProfileScreen extends React.Component {
             headerRight: (
                 <Button
                     onPress={async () => {
-                        let response = await fetch('http://54.190.221.240:5555/update_profile', {
+                        let response = await fetch('http://127.0.0.1:5555/update_profile', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
@@ -159,7 +160,7 @@ export class EditProfileScreen extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await fetch('http://54.190.221.240:5555/get_profile?'
+        let response = await fetch('http://127.0.0.1:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -182,29 +183,29 @@ export class EditProfileScreen extends React.Component {
                 scrollEnabled={false}
             >
                 <View style={{flex: 1, justifyContent: 'center'}}>
-                    <TextInput style={{fontSize: 30}} defaultValue={this.state.name}
+                    <TextInput style={[styles.input, {fontSize: 30}]} defaultValue={this.state.name}
                                placeholder="Enter your name"
                                onChangeText={(name) => {this.setState({name}); this.props.navigation.setParams({name});}}/>
                 </View>
                 <View style={{flex: 3, justifyContent: 'center'}}>
                     <Image
-                        style={{width: 200, height: 200}}
+                        style={{width: 200, height: 200, borderRadius: 200/2}}
                         source={{uri: this.state.image}}
                     />
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
 
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>School:</Text>
-                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                        <Text style={[styles.input]}>School:</Text>
+                        <TextInput style={[styles.input]}
                                    multiline={true}
                                    defaultValue={this.state.college}
                                    placeholder="Enter the school you attend"
                                    onChangeText={(college) => {this.setState({college}); this.props.navigation.setParams({college});}}/>
                     </View>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Class:</Text>
-                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                        <Text style={[styles.input]}>Class:</Text>
+                        <TextInput style={[styles.input]}
                                    multiline={true}
                                    defaultValue={this.state.year}
                                    placeholder="Enter your graduation year"
@@ -214,16 +215,16 @@ export class EditProfileScreen extends React.Component {
                 </View>
                 <View style={{flex: 1.5, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Major:</Text>
-                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                        <Text style={[styles.input]}>Major:</Text>
+                        <TextInput style={[styles.input]}
                                    multiline={true}
                                    defaultValue={this.state.major}
                                    placeholder="What's your major"
                                    onChangeText={(major) => {this.setState({major}); this.props.navigation.setParams({major});}}/>
                     </View>
                     <View style={{flex: 1, alignItems: 'center', borderWidth: 1 / PixelRatio.get()}}>
-                        <Text style={{fontSize: 18}}>Fun Fact:</Text>
-                        <TextInput style={{fontSize: 18, textAlign: 'center'}}
+                        <Text style={[styles.input]}>Fun Fact:</Text>
+                        <TextInput style={[styles.input]}
                                    multiline={true}
                                    defaultValue={this.state.description}
                                    placeholder="Tell us a fun fact about yourself"
@@ -246,13 +247,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'white'
     },
     input: {
-        flex: 1,
-        flexDirection: 'row',
         fontSize: 18,
-        //padding: 10,
-        marginHorizontal: 10
+        fontFamily: 'montserrat',
+        textAlign: 'center'
     },
     inputContainer: {
         borderWidth: 1 / PixelRatio.get(),

@@ -74,7 +74,7 @@ def waiting_for_match():
         if profile.get_name(username) == '':
             return jsonify(success=True, ready=False, reason='Please add a name to your profile before requesting a match')
         if matches.request_exists(username):
-            return jsonify(success=True, ready=False, reason='Looking for a match...\nPlease wait while we find you a match')
+            return jsonify(success=True, ready=False, reason='Looking for a match...\nPlease wait while we find you a\nmatch')
         if matches.request_too_recent(username):
             return jsonify(success=True, ready=False, reason='You got a match!\nWait before requesting another match')
 

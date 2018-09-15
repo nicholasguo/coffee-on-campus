@@ -3,17 +3,18 @@ import {
     ActivityIndicator,
     Alert,
     AsyncStorage,
-    Button,
     StatusBar,
     StyleSheet,
     View,
     Text,
     TextInput,
-    PixelRatio
+    PixelRatio, Image
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-import cssVar from './Lib/cssVar';
+import Button from 'react-native-button';
+
+import { Font } from 'expo';
 
 import { LoggedOutScreen, SignUpScreen, SignInScreen, AuthLoadingScreen } from './Authentication'
 import { ProfileScreen, EditProfileScreen } from "./Profile";
@@ -25,12 +26,12 @@ class HomeScreen extends React.Component {
             headerTitle: 'Home',
             headerRight: (
                 <Button
+                    //style={}
                     onPress={async () => {
                         await AsyncStorage.clear();
                         navigation.navigate('Auth');
                     }}
-                    title="Sign Out"
-                />
+                >Sign Out   </Button>
             ),
         };
     };
@@ -43,6 +44,9 @@ class HomeScreen extends React.Component {
 
     async componentWillMount(){
         let userToken = await AsyncStorage.getItem('userToken');
+        await Font.loadAsync({
+            'montserrat': require('./assets/fonts/Montserrat/Montserrat-Regular.ttf'),
+        });
         this.setState({userToken: userToken, isLoading: false});
     }
 
@@ -56,10 +60,16 @@ class HomeScreen extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 30, textAlign: 'center'}}>{'Welcome to\nCoffee on Campus!\n'}</Text>
-                <Text style={{fontSize: 18, textAlign: 'center'}}>You are logged in as{'\n'}{this.state.userToken}{'\n'}</Text>
-                <Button title="View your profile" onPress={this._showProfile} />
-                <Button title="See my matches" onPress={this._showMatches} />
+                <Text style={[styles.input, {fontSize: 30}]}>{'Welcome to\nCoffee on Campus!'}</Text>
+                <View style={{padding:25}}>
+                    <Image
+                        style={{width: 150, height: 150, borderRadius: 150/2}}
+                        source={{uri: 'https://www.siliconvalleyandbeyond.com/wp-content/uploads/nathan-dumlao-287719-e1513904063816-495x400.jpg'}}
+                    />
+                </View>
+                <Text style={[styles.input]}>You are logged in as{'\n'}{this.state.userToken}{'\n'}</Text>
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._showProfile}>View your profile</Button>
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._showMatches}>See my matches</Button>
             </View>
         );
     }
@@ -85,13 +95,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'lightyellow'
     },
     input: {
-        flex: 1,
-        flexDirection: 'row',
         fontSize: 18,
-        //padding: 10,
-        marginHorizontal: 10
+        textAlign: 'center',
+        fontFamily: 'montserrat',
+        fontWeight: 'normal'
+
     },
     inputContainer: {
         borderWidth: 1 / PixelRatio.get(),

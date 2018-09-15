@@ -3,7 +3,7 @@ import {
     ActivityIndicator,
     Alert,
     AsyncStorage,
-    Button,
+    //Button,
     StatusBar,
     StyleSheet,
     View,
@@ -12,7 +12,10 @@ import {
     TextInput,
     PixelRatio, Text, Image
 } from 'react-native';
-import { createStackNavigator, createSwitchNavigator, withNavigation } from 'react-navigation';
+
+import { Font } from 'expo';
+
+import Button from 'react-native-button'
 
 class MatchItem extends React.Component {
     constructor(props) {
@@ -21,7 +24,7 @@ class MatchItem extends React.Component {
     }
 
     async getProfile() {
-        let response = await fetch('http://54.190.221.240:5555/get_profile?'
+        let response = await fetch('http://127.0.0.1:5555/get_profile?'
             + 'user=' + this.state.user
         );
         let responseJson = await response.json();
@@ -41,14 +44,14 @@ class MatchItem extends React.Component {
                     </View>
                     <View style={{flex: 4, alignItems: 'center'}}>
                         <Image
-                            style={{width: 120, height: 120}}
+                            style={{width: 120, height: 120, borderRadius: 120/2}}
                             source={{uri: this.state.image}}
                         />
                     </View>
                 </View>
                 <View style={{flex: 1, justifyContent: 'center'}}>
-                    <Button title="View profile" onPress={this._showProfile} />
-                    <Button title="Chat this person" onPress={this._showProfile} />
+                    <Button containerStyle={{padding:5}} style={styles.item} onPress={this._showProfile}>View Profile</Button>
+                    <Button containerStyle={{padding:5}} style={styles.item} onPress={this._showProfile}>Chat this person</Button>
                 </View>
 
             </View>
@@ -68,7 +71,7 @@ class MatchRequest extends React.Component {
 
     async componentDidMount() {
         console.log(this.state.userToken);
-        let response = await fetch('http://54.190.221.240:5555/waiting_for_match?'
+        let response = await fetch('http://127.0.0.1:5555/waiting_for_match?'
             + 'user=' + this.state.userToken
         );
         let responseJson = await response.json();
@@ -77,7 +80,7 @@ class MatchRequest extends React.Component {
     }
 
     componentDidUpdate() {
-        return fetch('http://54.190.221.240:5555/waiting_for_match?' + 'user=' + this.state.userToken)
+        return fetch('http://127.0.0.1:5555/waiting_for_match?' + 'user=' + this.state.userToken)
             .then((response) => response.json())
             .then((responseJson) => {
                 if (this.state.isLoading) {
@@ -92,7 +95,7 @@ class MatchRequest extends React.Component {
     }
 
     _requestMatch = async () => {
-        let response = await fetch('http://54.190.221.240:5555/request_match', {
+        let response = await fetch('http://127.0.0.1:5555/request_match', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -135,10 +138,7 @@ class MatchRequest extends React.Component {
             <View style={styles.container}>
                 <View style={{alignItems: 'center', justifyContent: 'center'}}>
                     <Text style={styles.item}>You are currently not looking for a match</Text>
-                    <Button
-                        onPress={this._requestMatch}
-                        title="Find a match"
-                    />
+                    <Button containerStyle={{padding:5}} style={styles.item} onPress={this._requestMatch}>Find a match</Button>
                 </View>
             </View>
         );
@@ -159,7 +159,7 @@ export class MatchesScreen extends React.Component {
     }
 
     async componentDidMount() {
-        let response = await fetch('http://54.190.221.240:5555/get_matches?'
+        let response = await fetch('http://127.0.0.1:5555/get_matches?'
             + 'user=' + this.state.userToken
         );
         let responseJson = await response.json();
@@ -169,7 +169,7 @@ export class MatchesScreen extends React.Component {
 
     async componentDidUpdate() {
         if (this.state.isLoading) {
-            let response = await fetch('http://54.190.221.240:5555/get_matches?'
+            let response = await fetch('http://127.0.0.1:5555/get_matches?'
                 + 'user=' + this.state.userToken
             );
             let responseJson = await response.json();
@@ -195,7 +195,8 @@ export class MatchesScreen extends React.Component {
                 <View style={{flex: 1}}>
                     <MatchRequest userToken={this.state.userToken} callback={this.dirty}/>
                 </View>
-                <View style={{flex: 5.5}}>
+                <View style={{flex: 3}}>
+                    <Text style={styles.item}>Your Matches{'\n'}</Text>
                     <FlatList
                         refreshControl={
                             <RefreshControl
@@ -217,6 +218,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 10,
         paddingBottom: 10,
+        backgroundColor: 'white'
     },
     match: {
         borderWidth: 1 / PixelRatio.get(),
@@ -225,6 +227,7 @@ const styles = StyleSheet.create({
     },
     item: {
         fontSize: 18,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontFamily: 'montserrat'
     },
 })

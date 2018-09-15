@@ -3,21 +3,30 @@ import {
     ActivityIndicator,
     Alert,
     AsyncStorage,
-    Button,
     StatusBar,
     StyleSheet,
     View,
     TextInput,
-    PixelRatio, Text
+    PixelRatio, Text, Image
 } from 'react-native';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { Font } from 'expo';
 
 import cssVar from './Lib/cssVar';
+
+import Button from 'react-native-button'
 
 export class LoggedOutScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {user: '', password: ''};
+        this.state = {user: '', password: '', isLoading: true};
+    }
+
+    async componentWillMount(){
+        await Font.loadAsync({
+            'montserrat': require('./assets/fonts/Montserrat/Montserrat-Regular.ttf'),
+        });
+        this.setState({isLoading: false});
     }
 
     static navigationOptions = {
@@ -25,11 +34,24 @@ export class LoggedOutScreen extends React.Component {
     };
 
     render() {
+        if (this.state.isLoading){
+            return(
+                <View style={{flex: 1, padding: 20}}>
+                    <ActivityIndicator/>
+                </View>
+            )
+        }
         return (
             <View style={styles.container}>
-                <Text style={{fontSize: 30, textAlign: 'center'}}>{'Coffee on Campus\n'}</Text>
-                <Button title="Sign in!" onPress={this._goToSignIn} />
-                <Button title="Create Account" onPress={this._goToSignUp} />
+                <Text style={[styles.input, {fontSize: 30}]}>{'Coffee on Campus'}</Text>
+                <View style={{padding:25}}>
+                    <Image
+                        style={{width: 150, height: 150, borderRadius: 150/2}}
+                        source={{uri: 'https://www.siliconvalleyandbeyond.com/wp-content/uploads/nathan-dumlao-287719-e1513904063816-495x400.jpg'}}
+                    />
+                </View>
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._goToSignIn}>Sign In</Button>
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._goToSignUp}>Create Account</Button>
             </View>
         );
     }
@@ -56,6 +78,13 @@ export class SignUpScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+                <Text style={[styles.input, {fontSize: 30}]}>{'Coffee on Campus'}</Text>
+                <View style={{padding:25}}>
+                    <Image
+                        style={{width: 150, height: 150, borderRadius: 150/2}}
+                        source={{uri: 'https://www.siliconvalleyandbeyond.com/wp-content/uploads/nathan-dumlao-287719-e1513904063816-495x400.jpg'}}
+                    />
+                </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         textContentType='user'
@@ -84,13 +113,13 @@ export class SignUpScreen extends React.Component {
                         onChangeText={(password) => this.setState({password})}
                     />
                 </View>
-                <Button title="Sign up!" onPress={this._signUpAsync} />
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._signUpAsync}>Sign Up</Button>
             </View>
         );
     }
 
     _signUpAsync = async () => {
-        let response = await fetch('http://54.190.221.240:5555/signup', {
+        let response = await fetch('http://127.0.0.1:5555/signup', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -125,6 +154,13 @@ export class SignInScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
+                <Text style={[styles.input, {fontSize: 30}]}>{'Coffee on Campus'}</Text>
+                <View style={{padding:25}}>
+                    <Image
+                        style={{width: 150, height: 150, borderRadius: 150/2}}
+                        source={{uri: 'https://www.siliconvalleyandbeyond.com/wp-content/uploads/nathan-dumlao-287719-e1513904063816-495x400.jpg'}}
+                    />
+                </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         textContentType={'user'}
@@ -143,13 +179,13 @@ export class SignInScreen extends React.Component {
                         onChangeText={(password) => this.setState({password})}
                     />
                 </View>
-                <Button title="Sign in!" onPress={this._signInAsync} />
+                <Button containerStyle={{padding:5}} style={styles.input} onPress={this._signInAsync}>Sign In</Button>
             </View>
         );
     }
 
     _signInAsync = async () => {
-        let response = await fetch('http://54.190.221.240:5555/signin?'
+        let response = await fetch('http://127.0.0.1:5555/signin?'
             + 'user=' + this.state.user
             + '&pass=' + this.state.password
         );
@@ -195,13 +231,13 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'lightyellow'
     },
     input: {
-        flex: 1,
-        flexDirection: 'row',
         fontSize: 18,
+        fontFamily: 'montserrat',
         //padding: 10,
-        marginHorizontal: 10
+        textAlign: 'center'
     },
     inputContainer: {
         borderWidth: 1 / PixelRatio.get(),
@@ -209,6 +245,9 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         height: 45,
         width: 250,
-        margin: 2
+        margin: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+
     }
 });

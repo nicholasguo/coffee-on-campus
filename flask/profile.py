@@ -3,6 +3,8 @@ from flask import *
 
 db = 'profiles.db'
 
+DEFAULT_IMAGE = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaWsjTM9wIYQ-L9K5yj7MvBI222lgSd3fpML3zmdwQ8oPHS1Y4'
+
 def initialize_db():
     with sqlite3.connect(db) as conn: # connect to that database (will create if it doesn't already exist)
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
@@ -17,7 +19,7 @@ def create_profile(user):
         c = conn.cursor()  # make cursor into database (allows us to execute commands)
         rows = c.execute('''SELECT * FROM profiles WHERE user = ?;''',(user,)).fetchone()
         if rows is None:
-            c.execute('''INSERT into profiles VALUES (?,'','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaWsjTM9wIYQ-L9K5yj7MvBI222lgSd3fpML3zmdwQ8oPHS1Y4','','','','');''', (user,))
+            c.execute('''INSERT into profiles VALUES (?,'', ?,'','','','');''', (user, DEFAULT_IMAGE))
 
 
 def update_profile(user, name=None, image=None, college=None, year=None, major=None, description=None):
@@ -44,6 +46,7 @@ def get_profile(user):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()  # make cursor into database (allows us to execute commands)
     rows = c.execute('''SELECT * FROM profiles WHERE user = ?;''', (user,)).fetchone()
+    print('i hate life', DEFAULT_IMAGE)
     return jsonify(dict(rows))
 
 def get_name(user):
